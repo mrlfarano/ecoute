@@ -1,6 +1,16 @@
+from openai import OpenAI
+import os
 import torch
 from faster_whisper import WhisperModel
 from openai import OpenAI
+
+# Initialize OpenAI client with API key from environment variable or keys.py
+try:
+    from keys import OPENAI_API_KEY
+    client = OpenAI(api_key=OPENAI_API_KEY)
+except ImportError:
+    # Fallback to environment variable
+    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 def get_model(use_api):
     if use_api:
@@ -33,7 +43,8 @@ class APIWhisperTranscriber:
             with open(wav_file_path, "rb") as audio_file:
                 result = self.client.audio.transcriptions.create(
                     model="whisper-1",
-                    file=audio_file
+                    file=audio_file,
+                    response_format="text"  # Explicitly request text format
                 )
             return result.text.strip()
         except Exception as e:
