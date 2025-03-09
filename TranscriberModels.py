@@ -1,7 +1,8 @@
 from openai import OpenAI
-import whisper
 import os
 import torch
+from faster_whisper import WhisperModel
+from openai import OpenAI
 
 # Initialize OpenAI client with API key from environment variable or keys.py
 try:
@@ -15,35 +16,37 @@ def get_model(use_api):
     if use_api:
         return APIWhisperTranscriber()
     else:
-        return WhisperTranscriber()
+        return FasterWhisperTranscriber()
 
-class WhisperTranscriber:
+class FasterWhisperTranscriber:
     def __init__(self):
-        # Set device to CUDA if available, otherwise use CPU
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.audio_model = whisper.load_model(os.path.join(os.getcwd(), 'tiny.en.pt')).to(self.device)
-        print(f"[INFO] Whisper using GPU: {torch.cuda.is_available()} on device: {self.device}")
+        print(f"[INFO] Loading Faster Whisper model...")
+        self.model = WhisperModel("tiny.en", device="cuda" if torch.cuda.is_available() else "cpu", 
+                                 compute_type="float32" if torch.cuda.is_available() else "int8")
+        print(f"[INFO] Faster Whisper using GPU: {torch.cuda.is_available()}")
 
     def get_transcription(self, wav_file_path):
         try:
-            # Use fp16 precision when using CUDA for better performance
-            # Remove the device parameter as the model is already on the correct device
-            result = self.audio_model.transcribe(wav_file_path, fp16=torch.cuda.is_available())
+            segments, _ = self.model.transcribe(wav_file_path, beam_size=5)
+            full_text = " ".join(segment.text for segment in segments)
+            return full_text.strip()
         except Exception as e:
             print(e)
             return ''
-        return result['text'].strip()
-    
+
 class APIWhisperTranscriber:
+    def __init__(self, api_key=None):
+        self.client = OpenAI(api_key=api_key)
+    
     def get_transcription(self, wav_file_path):
         try:
             with open(wav_file_path, "rb") as audio_file:
-                result = client.audio.transcriptions.create(
+                result = self.client.audio.transcriptions.create(
                     model="whisper-1",
                     file=audio_file,
                     response_format="text"  # Explicitly request text format
                 )
+            return result.text.strip()
         except Exception as e:
             print(e)
             return ''
-        return result.text.strip()

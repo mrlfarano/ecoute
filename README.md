@@ -1,11 +1,10 @@
-
 # 🎧 Ecoute
 
 Ecoute is a live transcription tool that provides real-time transcripts for both the user's microphone input (You) and the user's speakers output (Speaker) in a textbox. It also generates a suggested response using OpenAI's GPT-4o-mini for the user to say based on the live transcription of the conversation.
 
 ## 📖 Demo
 
-https://github.com/SevaSk/ecoute/assets/50382291/8ac48927-8a26-49fd-80e9-48f980986208
+https://github.com/user-attachments/assets/5616421f-838d-439f-8b15-0df7b8d33459
 
 Ecoute is designed to help users in their conversations by providing live transcriptions and generating contextually relevant responses. By leveraging the power of OpenAI's GPT-4o-mini, Ecoute aims to make communication more efficient and enjoyable.
 
@@ -16,7 +15,7 @@ Follow these steps to set up and run Ecoute on your local machine.
 ### 📋 Prerequisites
 
 - Python >=3.8.0
-- An OpenAI API key that can access OpenAI API (set up a paid account OpenAI account)
+- (Optional) An OpenAI API key that can access Whisper API (set up a paid account OpenAI account)
 - Windows OS (Not tested on others)
 - FFmpeg
 - For GPU acceleration: CUDA-compatible GPU with appropriate drivers (optional but recommended for faster local transcription)
@@ -24,13 +23,17 @@ Follow these steps to set up and run Ecoute on your local machine.
 If FFmpeg is not installed in your system, you can follow the steps below to install it.
 
 First, you need to install Chocolatey, a package manager for Windows. Open your PowerShell as Administrator and run the following command:
+
 ```
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 ```
+
 Once Chocolatey is installed, you can install FFmpeg by running the following command in your PowerShell:
+
 ```
 choco install ffmpeg
 ```
+
 Please ensure that you run these commands in a PowerShell window with administrator privileges. If you face any issues during the installation, you can visit the official Chocolatey and FFmpeg websites for troubleshooting.
 
 ### 🔧 Installation
@@ -52,22 +55,23 @@ Please ensure that you run these commands in a PowerShell window with administra
    ```
    pip install -r requirements.txt
    ```
-   
+
 4. Set up your OpenAI API key using one of these methods:
 
    - Option 1: Create a `keys.py` file in the ecoute directory using a command prompt. Run the following command, replacing "API KEY" with your actual OpenAI API key:
 
-      ```
-      python -c "with open('keys.py', 'w', encoding='utf-8') as f: f.write('OPENAI_API_KEY=\"API KEY\"')"
-      ```
+     ```
+     python -c "with open('keys.py', 'w', encoding='utf-8') as f: f.write('OPENAI_API_KEY=\"API KEY\"')"
+     ```
 
    - Option 2: Create the keys.py file manually. Open your text editor and enter the following content:
-   
-      ```
-      OPENAI_API_KEY="API KEY"
-      ```
-      Replace "API KEY" with your actual OpenAI API key. Save this file as keys.py within the ecoute directory.
-      
+
+     ```
+     OPENAI_API_KEY="API KEY"
+     ```
+
+     Replace "API KEY" with your actual OpenAI API key. Save this file as keys.py within the ecoute directory.
+
    - Option 3: Set the OPENAI_API_KEY environment variable. The application will automatically use this if no keys.py file is found.
 
 ### 🎬 Running Ecoute
@@ -84,7 +88,7 @@ For a more better and faster version that also works with most languages, use:
 python main.py --api
 ```
 
-Upon initiation, Ecoute will begin transcribing your microphone input and speaker output in real-time, generating a suggested response based on the conversation. Please note that it might take a few seconds for the system to warm up before the transcription becomes real-time.
+Upon initiation, Ecoute will begin transcribing your microphone input and speaker output in real-time. Please note that it might take a few seconds for the system to warm up before the transcription becomes real-time.
 
 The --api flag will use the whisper api for transcriptions. This significantly enhances transcription speed and accuracy, and it works in most languages (rather than just English without the flag). It's expected to become the default option in future releases. However, keep in mind that using the Whisper API will consume more OpenAI credits than using the local model. This increased cost is attributed to the advanced features and capabilities that the Whisper API provides. Despite the additional expense, the substantial improvements in speed and transcription accuracy may make it a worthwhile investment for your use case.
 
