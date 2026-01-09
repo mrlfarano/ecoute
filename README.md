@@ -1,12 +1,20 @@
-# 🎧 Ecoute
+# 🎧 Ecoute - AI Research Assistant
 
-Ecoute is a live transcription tool that provides real-time transcripts for both the user's microphone input (You) and the user's speakers output (Speaker) in a textbox. It also generates a suggested response using OpenAI's GPT-4o-mini for the user to say based on the live transcription of the conversation.
+Ecoute is a **live transcription and AI research assistant** that provides real-time transcripts for both the user's microphone input (You) and the user's speakers output (Speaker). It now includes:
+
+- 🔍 **Real-time web search** with source citations
+- 💡 **AI-generated response suggestions** using OpenAI's GPT-4o-mini
+- 📊 **Automatic action item tracking** and conversation insights
+- 🔬 **Deep dive research** on any topic
+- 📖 **Source transparency** - see exactly what's being researched
+
+**See [FEATURES.md](FEATURES.md) for comprehensive feature documentation.**
 
 ## 📖 Demo
 
 https://github.com/user-attachments/assets/5616421f-838d-439f-8b15-0df7b8d33459
 
-Ecoute is designed to help users in their conversations by providing live transcriptions and generating contextually relevant responses. By leveraging the power of OpenAI's GPT-4o-mini, Ecoute aims to make communication more efficient and enjoyable.
+Ecoute is designed to help users in their conversations by providing live transcriptions, intelligent research, and contextually relevant responses. By leveraging OpenAI's GPT-4o-mini with real-time web search capabilities, Ecoute transforms conversations into research sessions with automatic insights and source transparency.
 
 ## 🚀 Getting Started
 
