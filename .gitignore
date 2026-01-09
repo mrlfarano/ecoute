@@ -26,6 +26,7 @@ wheels/
 
 # API Keys
 keys.py
+backend/keys.py
 
 # Virtual Environment
 venv/
@@ -55,6 +56,21 @@ Thumbs.db
 *.rpm
 *.tar.gz
 *.zip
+dist-electron/
+
+# Node
+node_modules/
+frontend/node_modules/
+frontend/build/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+
+# Electron
+out/
+*.asar
 
 # Temp files
 *.tmp
