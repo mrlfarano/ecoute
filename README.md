@@ -1,148 +1,269 @@
 # 🎧 Ecoute - AI Research Assistant
 
-Ecoute is a **live transcription and AI research assistant** that provides real-time transcripts for both the user's microphone input (You) and the user's speakers output (Speaker). It now includes:
+**Ecoute** is a powerful AI-powered desktop application for real-time transcription, intelligent research, and conversation insights. Built with modern web technologies for a beautiful, Discord-style experience.
 
-- 🔍 **Real-time web search** with source citations
-- 💡 **AI-generated response suggestions** using OpenAI's GPT-4o-mini
-- 📊 **Automatic action item tracking** and conversation insights
-- 🔬 **Deep dive research** on any topic
-- 📖 **Source transparency** - see exactly what's being researched
+---
 
-**See [FEATURES.md](FEATURES.md) for comprehensive feature documentation.**
+## ✨ Key Features
 
-## 📖 Demo
+- 🎤 **Real-time transcription** - Live audio from mic and speakers
+- 🤖 **AI response suggestions** - Powered by GPT-4o-mini
+- 🔍 **Intelligent research** - Automatic web search with source citations
+- 📊 **Conversation insights** - Action items, key topics, and decisions
+- 🎨 **Beautiful UI** - Modern, Discord-inspired interface
+- ⚡ **Fast & responsive** - Built with Electron and React
+- 🌐 **Cross-platform** - Windows, macOS, and Linux
 
-https://github.com/user-attachments/assets/5616421f-838d-439f-8b15-0df7b8d33459
+---
 
-Ecoute is designed to help users in their conversations by providing live transcriptions, intelligent research, and contextually relevant responses. By leveraging OpenAI's GPT-4o-mini with real-time web search capabilities, Ecoute transforms conversations into research sessions with automatic insights and source transparency.
+## 🚀 Quick Start
 
-## 🚀 Getting Started
+### Prerequisites
 
-Follow these steps to set up and run Ecoute on your local machine.
+- **Node.js 18+** and npm
+- **Python 3.8+**
+- **FFmpeg** (for audio processing)
+- **OpenAI API key**
 
-### 📋 Prerequisites
+### Installation
 
-- Python >=3.8.0
-- (Optional) An OpenAI API key that can access Whisper API (set up a paid account OpenAI account)
-- Windows OS (Not tested on others)
-- FFmpeg
-- For GPU acceleration: CUDA-compatible GPU with appropriate drivers (optional but recommended for faster local transcription)
-
-If FFmpeg is not installed in your system, you can follow the steps below to install it.
-
-First, you need to install Chocolatey, a package manager for Windows. Open your PowerShell as Administrator and run the following command:
-
-```
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-```
-
-Once Chocolatey is installed, you can install FFmpeg by running the following command in your PowerShell:
-
-```
-choco install ffmpeg
-```
-
-Please ensure that you run these commands in a PowerShell window with administrator privileges. If you face any issues during the installation, you can visit the official Chocolatey and FFmpeg websites for troubleshooting.
-
-### 🔧 Installation
-
-1. Clone the repository:
-
-   ```
-   git clone https://github.com/SevaSk/ecoute
-   ```
-
-2. Navigate to the `ecoute` folder:
-
-   ```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/mrlfarano/ecoute
    cd ecoute
    ```
 
-3. Install the required packages:
-
-   ```
+2. **Install Python dependencies:**
+   ```bash
    pip install -r requirements.txt
    ```
 
-4. Set up your OpenAI API key using one of these methods:
+3. **Install Node dependencies:**
+   ```bash
+   npm install
+   cd frontend && npm install && cd ..
+   ```
 
-   - Option 1: Create a `keys.py` file in the ecoute directory using a command prompt. Run the following command, replacing "API KEY" with your actual OpenAI API key:
+4. **Set up your OpenAI API key:**
 
-     ```
-     python -c "with open('keys.py', 'w', encoding='utf-8') as f: f.write('OPENAI_API_KEY=\"API KEY\"')"
-     ```
+   Create `backend/keys.py`:
+   ```python
+   OPENAI_API_KEY = "your-api-key-here"
+   ```
 
-   - Option 2: Create the keys.py file manually. Open your text editor and enter the following content:
+### Running the App
 
-     ```
-     OPENAI_API_KEY="API KEY"
-     ```
-
-     Replace "API KEY" with your actual OpenAI API key. Save this file as keys.py within the ecoute directory.
-
-   - Option 3: Set the OPENAI_API_KEY environment variable. The application will automatically use this if no keys.py file is found.
-
-### 🎬 Running Ecoute
-
-Run the main script:
-
-```
-python main.py
+```bash
+npm start
 ```
 
-For a more better and faster version that also works with most languages, use:
+This starts:
+- Python FastAPI backend
+- React development server
+- Electron window
+
+The app will open automatically!
+
+---
+
+## 📖 Documentation
+
+- **[ELECTRON_README.md](ELECTRON_README.md)** - Complete Electron app guide
+- **[FEATURES.md](FEATURES.md)** - Detailed feature documentation
+- **[BUILD.md](BUILD.md)** - Building and packaging instructions
+- **[README_CLASSIC.md](README_CLASSIC.md)** - Original tkinter version docs
+
+---
+
+## 🎨 UI Preview
 
 ```
-python main.py --api
+┌──────────────────────────────────────────────────────────┐
+│  🎧 Ecoute AI      ● Connected    [Start] [Clear] ⚙️    │
+├──────────────────────────────────────────────────────────┤
+│ 🎤 Transcript  │ 🔍 Research    │ 📊 Insights           │
+│ ─────────────  │ ──────────     │ ─────────             │
+│ Live audio...  │ • Searching... │ ⚡ Key Topics         │
+│                │ 📖 Sources     │ ✅ Decisions          │
+│ ✨ AI Response │ [1] Source 1   │ ⏰ Action Items       │
+└────────────────┴────────────────┴───────────────────────┘
 ```
 
-Upon initiation, Ecoute will begin transcribing your microphone input and speaker output in real-time. Please note that it might take a few seconds for the system to warm up before the transcription becomes real-time.
+---
 
-The --api flag will use the whisper api for transcriptions. This significantly enhances transcription speed and accuracy, and it works in most languages (rather than just English without the flag). It's expected to become the default option in future releases. However, keep in mind that using the Whisper API will consume more OpenAI credits than using the local model. This increased cost is attributed to the advanced features and capabilities that the Whisper API provides. Despite the additional expense, the substantial improvements in speed and transcription accuracy may make it a worthwhile investment for your use case.
+## 🏗️ Architecture
 
-### ⚠️ Limitations
+**Modern Stack:**
+- ⚡ **Electron** - Desktop framework
+- ⚛️ **React 18** - UI framework
+- 🎨 **Tailwind CSS** - Styling
+- 🐍 **FastAPI** - Python backend
+- 🔌 **WebSocket** - Real-time updates
 
-While Ecoute provides real-time transcription and response suggestions, there are several known limitations to its functionality that you should be aware of:
+**Project Structure:**
+```
+ecoute/
+├── electron/        # Electron main process
+├── frontend/        # React UI
+├── backend/         # Python FastAPI server
+└── package.json     # Build configuration
+```
 
-**Default Mic and Speaker:** Ecoute is currently configured to listen only to the default microphone and speaker set in your system. It will not detect sound from other devices or systems. If you wish to use a different mic or speaker, you will need to set it as your default device in your system settings.
+---
 
-**Whisper Model**: If the --api flag is not used, we utilize the 'tiny' version of the Whisper ASR model, due to its low resource consumption and fast response times. The model now supports GPU acceleration via CUDA for significantly improved performance when a compatible GPU is available. However, this model may not be as accurate as the larger models in transcribing certain types of speech, including accents or uncommon words.
+## 📦 Building
 
-**Language**: If you are not using the --api flag the Whisper model used in Ecoute is set to English. As a result, it may not accurately transcribe non-English languages or dialects. We are actively working to add multi-language support to future versions of the program.
+### Development
+```bash
+npm start
+```
 
-## 📦 Building as Installable Application
+### Production Build
+```bash
+npm run package
+```
 
-Ecoute can be packaged as a standalone application for easy distribution:
+Creates installers for:
+- **Windows**: `.exe` installer
+- **macOS**: `.dmg` image
+- **Linux**: `.AppImage`
 
-### Quick Build Commands
+See [ELECTRON_README.md](ELECTRON_README.md) for detailed build instructions.
+
+---
+
+## 🎯 Use Cases
+
+- **Meetings** - Auto-track action items and decisions
+- **Research** - Get cited sources in real-time
+- **Interviews** - Never miss important points
+- **Learning** - Deep dive into any topic
+- **Collaboration** - Stay on top of conversations
+
+---
+
+## 🆚 Versions
+
+### Electron App (Current)
+- ✅ Modern, beautiful UI
+- ✅ Discord-style design
+- ✅ Real-time WebSocket updates
+- ✅ System tray integration
+- ✅ Professional installers
+
+### Classic (tkinter)
+- See [README_CLASSIC.md](README_CLASSIC.md) and `main.py`
+- Simple but functional
+- Good for Python-only environments
+
+**We recommend the Electron version for the best experience!**
+
+---
+
+## 🔧 Requirements
+
+### System Requirements
+- **Windows 10+** / **macOS 10.13+** / **Ubuntu 18.04+**
+- **4GB RAM** minimum (8GB recommended)
+- **Microphone** and **speakers**
+- **Internet connection** for AI features
+
+### API Requirements
+- **OpenAI API key** with GPT-4o-mini access
+- Recommended: Whisper API enabled (--api flag)
+
+---
+
+## 📝 Configuration
+
+### API Key Setup
+
+**Option 1:** Create `backend/keys.py`
+```python
+OPENAI_API_KEY = "sk-..."
+```
+
+**Option 2:** Environment variable
+```bash
+export OPENAI_API_KEY="sk-..."
+```
+
+### FFmpeg Installation
 
 **Windows:**
 ```bash
-build_windows.bat
+choco install ffmpeg
 ```
 
 **macOS:**
 ```bash
-./build_macos.sh
+brew install ffmpeg
 ```
 
 **Linux:**
 ```bash
-./build_linux.sh
+sudo apt install ffmpeg
 ```
 
-### Distribution Formats
+---
 
-- **Windows**: Standalone `.exe` or full installer (`.exe` setup)
-- **macOS**: `.app` bundle or `.dmg` installer
-- **Linux**: Standalone executable or `.tar.gz` archive
+## 🐛 Troubleshooting
 
-**See [BUILD.md](BUILD.md) for comprehensive building and distribution instructions.**
+### Backend won't start
+```bash
+pip install -r requirements.txt
+```
 
-## 📖 License
+### Frontend errors
+```bash
+cd frontend
+rm -rf node_modules package-lock.json
+npm install
+```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Audio not working
+- Check microphone/speaker permissions
+- Verify FFmpeg is installed
+- Check default audio devices in system settings
+
+See [ELECTRON_README.md](ELECTRON_README.md) for more troubleshooting.
+
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to open issues or submit pull requests to improve Ecoute.
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Built with [Electron](https://www.electronjs.org/), [React](https://react.dev/), and [FastAPI](https://fastapi.tiangolo.com/)
+- UI inspired by [Discord](https://discord.com/)
+- Powered by [OpenAI](https://openai.com/)
+
+---
+
+## 🔗 Links
+
+- **GitHub**: [github.com/mrlfarano/ecoute](https://github.com/mrlfarano/ecoute)
+- **Issues**: [Report bugs or request features](https://github.com/mrlfarano/ecoute/issues)
+- **Discussions**: [Join the community](https://github.com/mrlfarano/ecoute/discussions)
+
+---
+
+**Made with ❤️ to be your #1 work tool**
+
+Start using Ecoute today and transform how you handle conversations!
