@@ -5,6 +5,11 @@ import {
   Zap, BookOpen, TrendingUp, CheckCircle, Clock, AlertCircle
 } from 'lucide-react';
 import './index.css';
+import SessionTabs from './components/SessionTabs';
+import CommandPalette from './components/CommandPalette';
+import ExportModal from './components/ExportModal';
+import SettingsPanel from './components/SettingsPanel';
+import SearchModal from './components/SearchModal';
 
 const API_URL = 'http://127.0.0.1:8000';
 
@@ -16,7 +21,49 @@ function App() {
   const [sources, setSources] = useState([]);
   const [insights, setInsights] = useState({});
   const [connected, setConnected] = useState(false);
+  const [activeSessionId, setActiveSessionId] = useState(null);
+
+  // Modal states
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [exportModalOpen, setExportModalOpen] = useState(false);
+  const [settingsPanelOpen, setSettingsPanelOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
+
   const wsRef = useRef(null);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Cmd+K or Ctrl+K - Command Palette
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setCommandPaletteOpen(true);
+      }
+      // Cmd+N or Ctrl+N - New Session
+      if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
+        e.preventDefault();
+        handleNewSession();
+      }
+      // Cmd+F or Ctrl+F - Search
+      if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
+        e.preventDefault();
+        setSearchModalOpen(true);
+      }
+      // Cmd+, or Ctrl+, - Settings
+      if ((e.metaKey || e.ctrlKey) && e.key === ',') {
+        e.preventDefault();
+        setSettingsPanelOpen(true);
+      }
+      // Cmd+E or Ctrl+E - Export
+      if ((e.metaKey || e.ctrlKey) && e.key === 'e') {
+        e.preventDefault();
+        setExportModalOpen(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // WebSocket connection
   useEffect(() => {
@@ -99,50 +146,146 @@ function App() {
     }
   };
 
+  const handleNewSession = async () => {
+    // This will be handled by SessionTabs component
+    // Just close command palette if open
+    setCommandPaletteOpen(false);
+  };
+
+  const handleSessionChange = async (sessionId) => {
+    setActiveSessionId(sessionId);
+    // Load session data
+    try {
+      const [transcriptRes, responseRes, insightsRes] = await Promise.all([
+        fetch(`${API_URL}/sessions/${sessionId}/transcript`),
+        fetch(`${API_URL}/sessions/${sessionId}/response`),
+        fetch(`${API_URL}/sessions/${sessionId}/insights`)
+      ]);
+
+      const transcriptData = await transcriptRes.json();
+      const responseData = await responseRes.json();
+      const insightsData = await insightsRes.json();
+
+      setTranscript(transcriptData.transcript || '');
+      setResponse(responseData.response || '');
+      setInsights(insightsData.insights || {});
+    } catch (error) {
+      console.error('Failed to load session:', error);
+    }
+  };
+
+  const handleCommandAction = (action, data) => {
+    switch (action) {
+      case 'newSession':
+        handleNewSession();
+        break;
+      case 'export':
+        setExportModalOpen(true);
+        break;
+      case 'emailDraft':
+        // Will handle email draft in export modal
+        setExportModalOpen(true);
+        break;
+      case 'search':
+        setSearchModalOpen(true);
+        break;
+      case 'settings':
+        setSettingsPanelOpen(true);
+        break;
+      case 'deepDive':
+        // Trigger deep dive research
+        if (data?.query) {
+          triggerDeepDive(data.query);
+        }
+        break;
+      default:
+        console.log('Unknown action:', action);
+    }
+    setCommandPaletteOpen(false);
+  };
+
+  const triggerDeepDive = async (query) => {
+    if (!activeSessionId) return;
+    try {
+      await fetch(`${API_URL}/sessions/${activeSessionId}/deepdive`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
+    } catch (error) {
+      console.error('Failed to trigger deep dive:', error);
+    }
+  };
+
+  const handleSelectSession = (sessionId) => {
+    handleSessionChange(sessionId);
+    setSearchModalOpen(false);
+  };
+
   return (
     <div className="h-screen bg-discord-darkest flex flex-col overflow-hidden">
       {/* Title Bar */}
-      <div className="h-12 bg-discord-dark border-b border-discord-gray flex items-center justify-between px-4 flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-discord-accent to-purple-600 flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <h1 className="text-discord-text font-bold text-lg">Ecoute AI</h1>
-          {connected && (
-            <div className="flex items-center gap-2 text-xs text-discord-green">
-              <div className="w-2 h-2 rounded-full bg-discord-green animate-pulse"></div>
-              Connected
+      <div className="bg-discord-dark border-b border-discord-gray flex-shrink-0">
+        <div className="h-12 flex items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-discord-accent to-purple-600 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
             </div>
-          )}
+            <h1 className="text-discord-text font-bold text-lg">Ecoute AI</h1>
+            {connected && (
+              <div className="flex items-center gap-2 text-xs text-discord-green">
+                <div className="w-2 h-2 rounded-full bg-discord-green animate-pulse"></div>
+                Connected
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            {!isRunning ? (
+              <button
+                onClick={startSession}
+                className="px-4 py-1.5 bg-discord-green hover:bg-green-600 text-white rounded transition-colors flex items-center gap-2"
+              >
+                <Radio className="w-4 h-4" />
+                Start Session
+              </button>
+            ) : (
+              <button
+                onClick={stopSession}
+                className="px-4 py-1.5 bg-discord-red hover:bg-red-600 text-white rounded transition-colors"
+              >
+                Stop
+              </button>
+            )}
+            <button
+              onClick={clearContext}
+              className="px-4 py-1.5 bg-discord-gray hover:bg-discord-gray-light text-discord-text rounded transition-colors"
+            >
+              Clear
+            </button>
+            <button
+              onClick={() => setSearchModalOpen(true)}
+              className="p-2 hover:bg-discord-gray rounded transition-colors"
+              title="Search (Cmd+F)"
+            >
+              <Search className="w-5 h-5 text-discord-text-muted" />
+            </button>
+            <button
+              onClick={() => setSettingsPanelOpen(true)}
+              className="p-2 hover:bg-discord-gray rounded transition-colors"
+              title="Settings (Cmd+,)"
+            >
+              <Settings className="w-5 h-5 text-discord-text-muted" />
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {!isRunning ? (
-            <button
-              onClick={startSession}
-              className="px-4 py-1.5 bg-discord-green hover:bg-green-600 text-white rounded transition-colors flex items-center gap-2"
-            >
-              <Radio className="w-4 h-4" />
-              Start Session
-            </button>
-          ) : (
-            <button
-              onClick={stopSession}
-              className="px-4 py-1.5 bg-discord-red hover:bg-red-600 text-white rounded transition-colors"
-            >
-              Stop
-            </button>
-          )}
-          <button
-            onClick={clearContext}
-            className="px-4 py-1.5 bg-discord-gray hover:bg-discord-gray-light text-discord-text rounded transition-colors"
-          >
-            Clear
-          </button>
-          <button className="p-2 hover:bg-discord-gray rounded transition-colors">
-            <Settings className="w-5 h-5 text-discord-text-muted" />
-          </button>
-        </div>
+        {/* Session Tabs */}
+        <SessionTabs
+          activeSessionId={activeSessionId}
+          onSessionChange={handleSessionChange}
+          onNewSession={handleNewSession}
+        />
       </div>
 
       {/* Main Content */}
@@ -364,6 +507,30 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <CommandPalette
+        isOpen={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+        onAction={handleCommandAction}
+      />
+
+      <ExportModal
+        isOpen={exportModalOpen}
+        onClose={() => setExportModalOpen(false)}
+        sessionId={activeSessionId}
+      />
+
+      <SettingsPanel
+        isOpen={settingsPanelOpen}
+        onClose={() => setSettingsPanelOpen(false)}
+      />
+
+      <SearchModal
+        isOpen={searchModalOpen}
+        onClose={() => setSearchModalOpen(false)}
+        onSelectSession={handleSelectSession}
+      />
     </div>
   );
 }
