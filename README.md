@@ -110,6 +110,35 @@ While Ecoute provides real-time transcription and response suggestions, there ar
 
 **Language**: If you are not using the --api flag the Whisper model used in Ecoute is set to English. As a result, it may not accurately transcribe non-English languages or dialects. We are actively working to add multi-language support to future versions of the program.
 
+## 📦 Building as Installable Application
+
+Ecoute can be packaged as a standalone application for easy distribution:
+
+### Quick Build Commands
+
+**Windows:**
+```bash
+build_windows.bat
+```
+
+**macOS:**
+```bash
+./build_macos.sh
+```
+
+**Linux:**
+```bash
+./build_linux.sh
+```
+
+### Distribution Formats
+
+- **Windows**: Standalone `.exe` or full installer (`.exe` setup)
+- **macOS**: `.app` bundle or `.dmg` installer
+- **Linux**: Standalone executable or `.tar.gz` archive
+
+**See [BUILD.md](BUILD.md) for comprehensive building and distribution instructions.**
+
 ## 📖 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
